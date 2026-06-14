@@ -2,12 +2,12 @@ import Foundation
 import SharedTypes
 import os
 
-let log = Logger(subsystem: "ai.slaptoyes", category: "daemon")
-log.info("slap-daemon starting")
+let log = Logger(subsystem: "ai.yesengineer", category: "daemon")
+log.info("yes-engineer daemon starting")
 
 var config = DaemonConfig()
 let detector = SlapDetector()
-let xpc = XPCService(machServiceName: SlapDaemonMachServiceName)
+let xpc = XPCService(machServiceName: YesEngineerDaemonMachServiceName)
 
 xpc.configHandler = { newCfg in
     config = newCfg
@@ -16,7 +16,7 @@ xpc.configHandler = { newCfg in
 
 let sensor = IMUSensor()
 var lastSlap = Date.distantPast
-let cooldownQueue = DispatchQueue(label: "ai.slaptoyes.cooldown")
+let cooldownQueue = DispatchQueue(label: "ai.yesengineer.cooldown")
 
 sensor.onSample = { x, y, z in
     let mag = detector.process(x: x, y: y, z: z)
@@ -50,6 +50,6 @@ do {
 }
 
 xpc.resume()
-log.info("xpc listening on \(SlapDaemonMachServiceName, privacy: .public)")
+log.info("xpc listening on \(YesEngineerDaemonMachServiceName, privacy: .public)")
 
 CFRunLoopRun()

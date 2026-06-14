@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: macos-14
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Test legacy Go CLI
+        run: go test ./...
+
+      - name: Test Swift package
+        run: swift test --package-path app
+
+      - name: Build Swift package (arm64)
+        run: swift build --package-path app --configuration release --arch arm64
+
+      - name: Build Swift package (x86_64)
+        run: swift build --package-path app --configuration release --arch x86_64
+
+      - name: Build universal app bundle
+        working-directory: app
+        env:
+          BUILD_ARCHS: "arm64 x86_64"
+        run: ./Bundle/build-app.sh
+
+      - name: Verify app signature
+        run: |
+          set -euo pipefail
+          codesign --verify --deep --strict --verbose=2 \
+            "app/build/Yes Engineer.app"
+
+      - name: Build distributable DMG
+        working-directory: app
+        run: ./Bundle/build-dmg.sh
+
+      - name: Inspect built artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "==> app bundle"
+          ls -la "app/build/Yes Engineer.app/Contents/MacOS"
+          lipo -info "app/build/Yes Engineer.app/Contents/MacOS/YesEngineer" || true
+          echo
+          echo "==> DMG"
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" \
+            "app/build/Yes Engineer.app/Contents/Info.plist")
+          DMG="app/build/Yes-Engineer-${VERSION}.dmg"
+          ls -la "${DMG}" "${DMG}.sha256"
+
+      - name: Upload CI artifacts
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: ci-${{ github.sha }}
+          path: |
+            app/build/Yes Engineer.app
+            app/build/Yes-Engineer-*.dmg
+            app/build/Yes-Engineer-*.dmg.sha256
+          if-no-files-found: ignore
+          retention-days: 7

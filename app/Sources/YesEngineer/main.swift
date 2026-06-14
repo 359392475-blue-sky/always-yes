@@ -6,6 +6,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
         menubar.start()
+        DispatchQueue.main.async { [weak self] in
+            self?.menubar.showControlPanel()
+        }
     }
 }
 

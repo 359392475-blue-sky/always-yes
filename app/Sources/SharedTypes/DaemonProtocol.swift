@@ -1,13 +1,13 @@
 import Foundation
 
-public let SlapDaemonMachServiceName = "ai.slaptoyes.daemon"
+public let YesEngineerDaemonMachServiceName = "ai.yesengineer.daemon"
 
-@objc public protocol SlapDaemonProtocol {
+@objc public protocol YesEngineerDaemonProtocol {
     func ping(reply: @escaping (String) -> Void)
     func updateConfig(_ data: Data, reply: @escaping (Bool) -> Void)
     func subscribe(reply: @escaping (Bool) -> Void)
 }
 
-@objc public protocol SlapClientProtocol {
+@objc public protocol YesEngineerClientProtocol {
     func slapDetected(_ data: Data)
 }

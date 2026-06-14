@@ -1,0 +1,175 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (must exist in the repo, e.g. v1.0.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Build and publish
+    runs-on: macos-14
+    timeout-minutes: 25
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@v6
+
+      - name: Resolve version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Allow workflow_dispatch to override the implicit tag ref.
+          if [[ "${GITHUB_EVENT_NAME}" == "workflow_dispatch" ]]; then
+            echo "ref=${GITHUB_REF_NAME}"  # placeholder, replaced below
+            VERSION="${RUNNER_TEMP:-/tmp}/.wf-version"
+            echo -n "${{ github.event.inputs.tag }}" > "${VERSION}"
+            VERSION_VAL=$(cat "${VERSION}")
+          else
+            VERSION_VAL="${GITHUB_REF_NAME#v}"
+          fi
+          APP_VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" app/Bundle/Info.plist)
+          if [[ "${VERSION_VAL}" != "${APP_VERSION}" ]]; then
+            echo "::error::Tag ${GITHUB_REF_NAME} (${VERSION_VAL}) does not match app version ${APP_VERSION}."
+            exit 1
+          fi
+          echo "version=${APP_VERSION}" >> "${GITHUB_OUTPUT}"
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Test legacy Go CLI
+        run: go test ./...
+
+      - name: Test Swift package
+        run: swift test --package-path app
+
+      - name: Build universal app bundle
+        working-directory: app
+        env:
+          BUILD_ARCHS: "arm64 x86_64"
+          MACOS_CODESIGN_IDENTITY: ${{ secrets.MACOS_CODESIGN_IDENTITY }}
+        run: ./Bundle/build-app.sh
+
+      - name: Verify app signature
+        run: |
+          set -euo pipefail
+          codesign --verify --deep --strict --verbose=2 \
+            "app/build/Yes Engineer.app"
+
+      - name: Build distributable DMG
+        working-directory: app
+        env:
+          MACOS_CODESIGN_IDENTITY: ${{ secrets.MACOS_CODESIGN_IDENTITY }}
+        run: ./Bundle/build-dmg.sh
+
+      - name: Verify DMG signature
+        if: env.MACOS_CODESIGN_IDENTITY != ''
+        run: |
+          set -euo pipefail
+          DMG="app/build/Yes-Engineer-${{ steps.version.outputs.version }}.dmg"
+          codesign --verify --verbose=2 "${DMG}"
+
+      # Notarization is wired but only runs when all required secrets are
+      # present. Until Apple Developer credentials are configured in the
+      # repo secrets, this step is skipped and users may need to remove the
+      # com.apple.quarantine xattr manually (documented in README).
+      - name: Notarize DMG
+        if: env.MACOS_NOTARY_PROFILE != ''
+        env:
+          MACOS_NOTARY_PROFILE: ${{ secrets.MACOS_NOTARY_PROFILE }}
+          MACOS_NOTARY_TEAM_ID: ${{ secrets.MACOS_NOTARY_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          DMG="app/build/Yes-Engineer-${{ steps.version.outputs.version }}.dmg"
+          xcrun notarytool submit "${DMG}" \
+            --keychain-profile "${MACOS_NOTARY_PROFILE}" \
+            --team-id "${MACOS_NOTARY_TEAM_ID}" \
+            --wait
+          xcrun stapler staple "${DMG}"
+
+      - name: Stage release artifacts
+        id: stage
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.version }}"
+          ART_DIR="${RUNNER_TEMP}/artifacts"
+          rm -rf "${ART_DIR}"
+          mkdir -p "${ART_DIR}"
+
+          cd app/build
+          for f in \
+            "Yes-Engineer-${VERSION}.app.zip" \
+            "Yes-Engineer-${VERSION}.app.zip.sha256" \
+            "Yes-Engineer-${VERSION}.dmg" \
+            "Yes-Engineer-${VERSION}.dmg.sha256"
+          do
+            if [[ -f "${f}" ]]; then
+              cp "${f}" "${ART_DIR}/"
+            else
+              echo "::warning::expected artifact missing: ${f}"
+            fi
+          done
+          cd "${ART_DIR}"
+          ls -la
+          echo "artifacts_dir=${ART_DIR}" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ART_DIR: ${{ steps.stage.outputs.artifacts_dir }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          TAG="${{ github.ref_name }}"
+          # For workflow_dispatch, the tag should already exist in the repo
+          # (we don't auto-create tags from a manual run).
+          if ! gh release view "${TAG}" >/dev/null 2>&1; then
+            echo "::error::Release ${TAG} does not exist. Create the tag first, then re-run."
+            exit 1
+          fi
+
+          # Build the upload list from the staged artifacts. Skip files
+          # that were never produced (e.g. DMG build failure).
+          shopt -s nullglob
+          ARTIFACTS=(
+            "${ART_DIR}/Yes-Engineer-${TAG#v}.app.zip"
+            "${ART_DIR}/Yes-Engineer-${TAG#v}.app.zip.sha256"
+            "${ART_DIR}/Yes-Engineer-${TAG#v}.dmg"
+            "${ART_DIR}/Yes-Engineer-${TAG#v}.dmg.sha256"
+          )
+          shopt -u nullglob
+          if [[ ${#ARTIFACTS[@]} -eq 0 ]]; then
+            echo "::error::No artifacts produced, aborting."
+            exit 1
+          fi
+          gh release upload "${TAG}" "${ARTIFACTS[@]}" --clobber
+
+          # Annotate the release body with SHA-256 sums so users can verify
+          # before installing.
+          SUMS_FILE="${ART_DIR}/SHA256SUMS.txt"
+          : > "${SUMS_FILE}"
+          for a in "${ARTIFACTS[@]}"; do
+            if [[ "${a}" == *.sha256 ]]; then continue; fi
+            shasum -a 256 "${a}" >> "${SUMS_FILE}" 2>/dev/null || true
+          done
+          if [[ -s "${SUMS_FILE}" ]]; then
+            gh release upload "${TAG}" "${SUMS_FILE}" --clobber
+          fi

@@ -1,8 +1,8 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 5.8
 import PackageDescription
 
 let package = Package(
-    name: "SlapToYes",
+    name: "YesEngineer",
     platforms: [.macOS(.v13)],
     targets: [
         .target(
@@ -10,14 +10,19 @@ let package = Package(
             path: "Sources/SharedTypes"
         ),
         .executableTarget(
-            name: "SlapDaemon",
+            name: "YesEngineerDaemon",
             dependencies: ["SharedTypes"],
-            path: "Sources/SlapDaemon"
+            path: "Sources/YesEngineerDaemon"
         ),
         .executableTarget(
-            name: "SlapToYes",
+            name: "YesEngineer",
             dependencies: ["SharedTypes"],
-            path: "Sources/SlapToYes"
+            path: "Sources/YesEngineer"
+        ),
+        .testTarget(
+            name: "YesEngineerTests",
+            dependencies: ["YesEngineer"],
+            path: "Tests/YesEngineerTests"
         ),
     ]
 )

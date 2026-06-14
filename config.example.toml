@@ -1,4 +1,4 @@
-# slap-to-yes config — copy to ~/.config/baituo-cc/config.toml
+# yes-engineer config — copy to ~/.config/yes-engineer/config.toml
 
 # Sensitivity threshold in g-force.
 # 0.05 = light tap, 0.14 = light slap (default), 0.30 = real whack.

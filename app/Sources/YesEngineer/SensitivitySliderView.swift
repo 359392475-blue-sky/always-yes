@@ -18,7 +18,11 @@ final class SensitivitySliderView: NSView {
     required init?(coder: NSCoder) { fatalError() }
 
     private func buildLabels() {
-        let titles = ["轻拍 Mac", "重击", "愤怒砸桌"]
+        let titles = [
+            L10n.text("Light tap", "轻拍 Mac"),
+            L10n.text("Firm tap", "重击"),
+            L10n.text("Hard hit", "愤怒砸桌"),
+        ]
         let aligns: [NSTextAlignment] = [.left, .center, .right]
         let xs: [CGFloat] = [14, 0, -14]   // -14 means right-aligned with 14 inset
         let widths: [CGFloat] = [80, bounds.width, 80]
@@ -54,7 +58,7 @@ final class SensitivitySliderView: NSView {
     }
 
     private func updateValueLabel(_ v: Double) {
-        slider.toolTip = String(format: "灵敏度阈值 %.3f g", v)
+        slider.toolTip = L10n.format("Sensitivity threshold %.3f g", "灵敏度阈值 %.3f g", v)
     }
 
     @objc private func sliderChanged() {

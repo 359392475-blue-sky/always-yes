@@ -1,4 +1,4 @@
-module github.com/blue-sky/slap-to-yes
+module github.com/edwin2jiang/yes-engineer
 
 go 1.26
 

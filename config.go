@@ -46,13 +46,13 @@ func defaultConfig() Config {
 
 func configPath() string {
 	if x := os.Getenv("XDG_CONFIG_HOME"); x != "" {
-		return filepath.Join(x, "baituo-cc", "config.toml")
+		return filepath.Join(x, "yes-engineer", "config.toml")
 	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return ""
 	}
-	return filepath.Join(home, ".config", "baituo-cc", "config.toml")
+	return filepath.Join(home, ".config", "yes-engineer", "config.toml")
 }
 
 // loadConfig returns the resolved config, the source label (for logs),

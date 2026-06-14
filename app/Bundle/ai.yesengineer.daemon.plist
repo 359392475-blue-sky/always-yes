@@ -3,12 +3,12 @@
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>ai.slaptoyes.daemon</string>
+    <string>ai.yesengineer.daemon</string>
     <key>BundleProgram</key>
-    <string>Contents/Library/LaunchDaemons/SlapDaemon</string>
+    <string>Contents/Library/LaunchDaemons/YesEngineerDaemon</string>
     <key>MachServices</key>
     <dict>
-        <key>ai.slaptoyes.daemon</key>
+        <key>ai.yesengineer.daemon</key>
         <true/>
     </dict>
     <key>RunAtLoad</key>

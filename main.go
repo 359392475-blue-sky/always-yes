@@ -1,4 +1,4 @@
-// slap-to-yes detects physical slaps on Apple Silicon MacBooks via the
+// yes-engineer detects physical taps on Apple Silicon MacBooks via the
 // IMU and presses Enter, so your AI coding assistant's "(y/N)" prompts
 // stop interrupting your flow.
 package main
@@ -22,7 +22,7 @@ func main() {
 	case "run":
 		os.Exit(cmdRun(os.Args[2:]))
 	case "version", "-v", "--version":
-		fmt.Println("slap-to-yes", version)
+		fmt.Println("yes-engineer", version)
 	case "help", "-h", "--help":
 		usage(os.Stdout)
 	default:
@@ -33,10 +33,10 @@ func main() {
 }
 
 func usage(w *os.File) {
-	fmt.Fprint(w, `slap-to-yes — slap your MacBook to press Enter
+	fmt.Fprint(w, `yes-engineer — tap your MacBook to help your AI coding assistant continue
 
 Usage:
-  slap-to-yes <command> [options]
+  yes-engineer <command> [options]
 
 Commands:
   doctor   Check hardware support and config (no sudo needed)
@@ -44,6 +44,6 @@ Commands:
   version  Print version
   help     Show this message
 
-Run 'slap-to-yes <command> --help' for command-specific options.
+Run 'yes-engineer <command> --help' for command-specific options.
 `)
 }

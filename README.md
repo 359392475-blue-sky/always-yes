@@ -1,205 +1,187 @@
-# Always Yes
+# Yes Engineer / Yes 工程师
 
-> 拍一下 Mac，自动按回车。专为 Claude Code、Cursor、Windsurf 等 AI 编程助手打造。
+**Yes Engineer** is a local macOS assistant for AI coding workflows. Tap your Apple Silicon Mac to run a configurable action, or use global shortcuts to type confirmation text and press Return.
 
-当 AI 第八十次问你「Run this command? (y/N)」时，你的手早就抬起来了。**Always Yes** 通过 Apple Silicon 内置的加速度计感应你拍击 Mac 的动作，自动按下回车键。
+The Chinese product name is **Yes 工程师**. The English name is used for the app, repository, bundle, executable, and release artifacts.
 
-```
-   ✋        💢          ⏎
- (拍一下) → (感应到) → (按回车)
-```
+## English
 
-📺 **功能介绍视频**：[【AI能有什么坏心思呢？只是需要鼓励罢了】](https://b23.tv/g2LBNHR)（B 站）
+### Highlights
 
----
+- Opens the control panel automatically when the app launches.
+- Saves every valid setting change immediately; there are no Save or Cancel buttons.
+- Detects duplicate shortcuts inside Yes Engineer and global shortcuts already reserved by macOS or another app.
+- Supports English and Simplified Chinese, selected automatically from the macOS preferred language.
+- Runs locally without uploading sensor data, shortcuts, or typed content.
+- Default to firing in every foreground app, with an optional whitelist mode that limits actions to AI coding apps you select.
+- Manage the built-in allowlist and add custom apps from the App Scope tab in Settings.
+- Supports configurable tap sensitivity, cooldown, feedback, pause controls, actions, text, Return behavior, and shortcuts.
 
-## 它能做什么
+### Control Panel
 
-- ✅ 拍一下 Mac 机身 → 自动按回车
-- ✅ 默认只在终端 / VS Code / Cursor / Zed 等 AI 编程场景里触发，不会误伤聊天和文档
-- ✅ 灵敏度可调（轻拍 → 重击 → 愤怒砸桌）
-- ✅ 一键暂停 / 切换「所有应用」/「只在 AI 编程应用」
-- ✅ 完全本地运行，不联网，不上传任何数据
+![Yes Engineer settings in English](.github/assets/yes-engineer-settings-en.png)
 
----
+### Actions and Shortcuts
 
-## 硬件要求
+![Yes Engineer actions in English](.github/assets/yes-engineer-actions-en.png)
 
-**只能在带有 BMI286 加速度计的 Apple Silicon Mac 上工作**：
+Shortcut recording validates the new combination immediately. If the shortcut is already assigned in Yes Engineer or reserved globally, the app explains the conflict and waits for another combination.
 
-| 芯片 | 是否支持 |
+### Hardware Requirements
+
+Yes Engineer requires an Apple Silicon Mac with a BMI286 accelerometer.
+
+| Mac | Support |
 |---|---|
-| M2 / M2 Pro / M2 Max / M2 Ultra | ✅ |
-| M3 / M4 / M5（全系列） | ✅ |
-| M1 Pro / M1 Max | ✅ |
-| **M1 / M1 Air** | ❌（这一代没有 IMU） |
-| Intel Mac | ❌ |
+| M2, M3, M4, M5 families | Yes |
+| M1 Pro / M1 Max | Yes |
+| Base M1 / M1 Air | No IMU |
+| Intel Mac | No |
 
-打开 app 时会自动检测，如果你的 Mac 不支持，菜单栏会显示状态。
+### Install
 
----
+Download the latest `Yes-Engineer-*.app.zip` from [Releases](../../releases), unzip it, and move `Yes Engineer.app` to `/Applications`.
 
-## 安装
-
-### 方式 1：下载预编译版（推荐）
-
-1. 到 [Releases](../../releases) 下载最新的 `Always Yes.app.zip`
-2. 解压后把 `Always Yes.app` 拖到 `/Applications/`
-3. 因为是 ad-hoc 签名，第一次打开时 macOS 会拦截，需要执行：
-   ```bash
-   xattr -dr com.apple.quarantine "/Applications/Always Yes.app"
-   ```
-4. 双击 `Always Yes.app` 启动
-
-### 方式 2：自己编译（需要 Swift 工具链）
+The current build uses an ad-hoc signature. If macOS quarantines the downloaded app, run:
 
 ```bash
-git clone https://github.com/359392475-blue-sky/always-yes.git
-cd always-yes/app
+xattr -dr com.apple.quarantine "/Applications/Yes Engineer.app"
+```
+
+Then open `Yes Engineer.app`. The control panel appears immediately.
+
+### First Launch
+
+1. Approve the bundled daemon so Yes Engineer can read the Mac accelerometer.
+2. Grant Accessibility permission so the app can type text and press Return.
+3. Adjust sensitivity if a light tap does not trigger reliably.
+
+The default global shortcuts are:
+
+| Shortcut | Action |
+|---|---|
+| `⇧⌥↩` | Press Return |
+| `⇧⌥Y` | Type `yes`, then press Return |
+| `⇧⌥C` | Type `continue`, then press Return |
+
+Settings are stored at:
+
+```text
+~/Library/Application Support/YesEngineer/config.json
+```
+
+Existing settings from the former app are migrated automatically on first launch.
+
+### Language
+
+Yes Engineer reads the first language in macOS preferred languages:
+
+- Chinese locales use Simplified Chinese.
+- Other locales use English.
+
+The localization layer is centralized in `Localization.swift`, so additional languages can be added without changing settings behavior.
+
+## 中文
+
+**Yes 工程师** 是一款面向 AI 编程场景的本地 macOS 助手。你可以拍击支持的 Apple Silicon Mac 来执行动作，也可以使用全局快捷键自动输入确认内容并按回车。
+
+### 主要功能
+
+- 软件启动时自动打开控制面板。
+- 所有合法设置变更即时保存，不再需要“保存”或“取消”按钮。
+- 快捷键录制时同时检查应用内重复和 macOS / 其他应用占用，并立即提示冲突原因。
+- 支持英文和简体中文，默认自动匹配 macOS 首选语言。
+- 完全本地运行，不上传传感器数据、快捷键或输入内容。
+- 默认在所有前台应用里触发，也可以切换为白名单模式（仅在你选中的 AI 编程应用里生效）。
+- 在设置的“应用范围”标签页可管理内置白名单和添加自定义应用。
+- 可配置灵敏度、冷却时间、反馈、暂停状态、拍击动作、输入内容、自动回车和全局快捷键。
+
+### 控制面板
+
+![Yes 工程师中文设置界面](.github/assets/yes-engineer-settings-zh.png)
+
+### 动作与快捷键
+
+![Yes 工程师中文动作界面](.github/assets/yes-engineer-actions-zh.png)
+
+录制新快捷键后会立即进行冲突检测。如果组合键已经分配给其他动作，或已被系统和其他应用注册，界面会说明原因，并继续等待另一组快捷键。
+
+### 硬件要求
+
+Yes 工程师需要带 BMI286 加速度计的 Apple Silicon Mac。
+
+| Mac | 支持情况 |
+|---|---|
+| M2、M3、M4、M5 全系列 | 支持 |
+| M1 Pro / M1 Max | 支持 |
+| 基础款 M1 / M1 Air | 不支持，没有 IMU |
+| Intel Mac | 不支持 |
+
+### 安装与首次启动
+
+1. 从 [Releases](../../releases) 下载最新的 `Yes-Engineer-*.app.zip`。
+2. 解压后将 `Yes Engineer.app` 移到 `/Applications`。
+3. 首次启动时批准守护进程，并授予辅助功能权限。
+4. 控制面板会自动打开，修改设置后会即时保存。
+
+如果 macOS 拦截 ad-hoc 签名版本，请执行：
+
+```bash
+xattr -dr com.apple.quarantine "/Applications/Yes Engineer.app"
+```
+
+配置文件位于：
+
+```text
+~/Library/Application Support/YesEngineer/config.json
+```
+
+旧版本的设置会在首次启动时自动迁移。
+
+## Build and Test / 构建与测试
+
+```bash
+git clone https://github.com/edwin2jiang/yes-engineer.git
+cd yes-engineer
+
+swift test --package-path app
+go test ./...
+
+cd app
 ./Bundle/build-app.sh
-cp -r build/Always\ Yes.app /Applications/
 ```
 
-要求：macOS 13+，Swift 5.9+（系统自带 Xcode Command Line Tools 即可，无需 Xcode.app）。
+Requirements:
 
----
+- macOS 13 or later
+- Swift 5.9 or later
+- Go 1.26 or later for the legacy CLI tests
 
-## 第一次启动
+The app bundle is written to:
 
-启动后，状态栏顶部会出现一个 ✋ 图标。然后会依次弹出两个权限请求：
-
-### 1️⃣ 守护进程安装（输入 Mac 开机密码）
-
-为了读取传感器，Always Yes 需要安装一个后台守护进程。这是**一次性**的，输入一次密码后永久生效，重启 Mac 也不需要再输。
-
-### 2️⃣ 辅助功能权限（点一下开关）
-
-为了能模拟按下回车键，需要在「系统设置 → 隐私与安全性 → 辅助功能」里给 Always Yes 打勾。
-
-> **小贴士**：如果第一次没弹出，点状态栏的 ✋ 图标，菜单里会有「辅助功能：未授权（点此申请）」选项，点一下即可。
-
----
-
-## 怎么用
-
-### 拍哪里？
-
-拍 MacBook 的**外壳左右两侧**或**键盘下方机身**（不要砸屏幕）。轻拍即可，不需要使劲。
-
-如果触发不灵，把灵敏度往「轻拍 Mac」那一侧拉；如果误触发，往「重击」侧拉。
-
-### 状态栏菜单
-
-点状态栏的 ✋ 图标，会看到：
-
-```
-┌──────────────────────────────────┐
-│ 🎚️ 灵敏度  [轻拍 Mac ──●── 愤怒砸桌] │
-├──────────────────────────────────┤
-│ 暂停                              │
-├──────────────────────────────────┤
-│ 应用范围  ▶  ✓ 所有 AI 编程应用    │
-│              所有应用              │
-├──────────────────────────────────┤
-│ 守护进程：已启用                   │
-│ 辅助功能：已授权                   │
-├──────────────────────────────────┤
-│ 退出 Always Yes                   │
-└──────────────────────────────────┘
+```text
+app/build/Yes Engineer.app
 ```
 
-### 默认 AI 编程应用白名单
+## Architecture / 架构
 
-开箱即用支持以下应用（前台是它们时才会触发）：
-
-- **运行 AI 命令的终端**：Terminal、iTerm2、Ghostty、Warp、kitty、Alacritty、Hyper、Tabby、WezTerm
-- **AI 编程 IDE / 编辑器**：Cursor、Windsurf、Zed、VS Code、Xcode
-
-如果你想在浏览器、聊天软件等任何应用里都能用，切到「所有应用」即可。
-
----
-
-## 常见问题
-
-**Q: 拍了没反应？**
-A: 检查菜单里「辅助功能」是否「已授权」。如果状态是「未授权」，点击它，在系统设置里打勾后重启 app。
-
-**Q: 误触太多怎么办？**
-A: 把灵敏度滑块往「重击」方向拉。默认 0.144 适合轻拍，0.25+ 需要明显的拍击力度。
-
-**Q: 重启 Mac 后还要重装吗？**
-A: 不用。守护进程会随系统启动。Always Yes 菜单栏 app 也可以加到「登录项」里自动启动。
-
-**Q: 会不会偷传我的数据？**
-A: 不会。完整源码开源，所有处理都在本地。守护进程只读加速度计，菜单栏 app 只发送回车键，没有任何网络请求。
-
-**Q: 为什么需要管理员密码？**
-A: 因为 IMU 传感器属于内核级硬件接口，必须由根权限的守护进程读取。这是 macOS 的硬性要求，不是我们想这样做。
-
-**Q: 日志会不会越占越多？**
-A: 不会。守护进程的输出全部丢弃到 `/dev/null`，只通过 macOS 的 unified logging 输出，由系统自动轮转。
-
----
-
-## 项目结构
-
-```
-always-yes/
-├── app/                          ← Phase 2: Swift 菜单栏 app（主要产品）
-│   ├── Package.swift
-│   ├── Sources/
-│   │   ├── SlapToYes/            菜单栏 app（用户态）
-│   │   ├── SlapDaemon/           守护进程（root，读传感器）
-│   │   └── SharedTypes/          XPC 协议 / 共享数据类型
-│   └── Bundle/
-│       ├── build-app.sh          一键打包脚本
-│       ├── Info.plist
-│       ├── ai.slaptoyes.daemon.plist
-│       └── AppIcon.icns
-└── (根目录)                       ← Phase 1: Go CLI 参考实现
-    ├── main.go, detect.go, ...   早期验证版本，命令行 + sudo
-    └── config.example.toml
+```text
+Yes Engineer.app
+├── Menu bar and control panel
+├── Automatic settings persistence
+├── Localized English / Simplified Chinese UI
+├── Global shortcut registration and conflict detection
+├── Accessibility-based text and Return input
+└── Privileged YesEngineerDaemon
+    └── BMI286 accelerometer sampling and tap detection
 ```
 
-### 架构
+The Swift app is the primary product. The Go code in the repository root is retained as the early hardware-validation CLI.
 
-```
-┌─────────────────────────────┐  XPC  ┌──────────────────────────┐
-│ Always Yes.app（菜单栏）     │ ◄───► │ slap-daemon（root 后台） │
-│                             │       │                          │
-│ • 状态栏 UI                  │       │ • 读 BMI286 IMU（1kHz）   │
-│ • 灵敏度 / 暂停 / 应用范围    │       │ • 高通滤波 + 阈值检测     │
-│ • 收到 slap 后判断前台 app    │       │ • 检测到拍击 → XPC 推送   │
-│ • 模拟按下 Enter（CGEvent）   │       │                          │
-└─────────────────────────────┘       └──────────────────────────┘
-```
+## Privacy
 
-把检测逻辑（要 root）和按键逻辑（要辅助功能权限、要 GUI session）分到两个进程，是 macOS 沙盒模型的最佳实践。
-
----
-
-## 路线图
-
-- [x] **v0.1**：Go CLI 验证，命令行 + sudo（保留为参考）
-- [x] **v0.2**：Swift 菜单栏 app，端到端可用
-- [ ] **v0.3**：拍击力度反馈（轻拍 / 重击区分），登录项一键开启
-- [ ] **v0.4**：完整 6 路检测器算法（STA/LTA + CUSUM + 峰度），减少误触
-- [ ] **v0.5**：申请 Developer ID，正式签名 + Notarize，去掉手动 quarantine 步骤
-
----
-
-## 致谢
-
-- IMU 读取借鉴了 [`taigrr/apple-silicon-accelerometer`](https://github.com/taigrr/apple-silicon-accelerometer)（MIT），其本身是 [`olvvier/apple-silicon-accelerometer`](https://github.com/olvvier/apple-silicon-accelerometer) 研究项目的 Go 移植
-- 创意起源：[`taigrr/spank`](https://github.com/taigrr/spank)（拍一下笔记本它会喊「ow!」），我们只是把动作改成了按回车
-- 灵感来源：每天被 AI 问「Run this command?」无数次的疲惫
-
----
+Yes Engineer has no network feature. Sensor processing, shortcut handling, configuration, and text input all stay on the Mac.
 
 ## License
 
 [MIT](LICENSE) © 2026 Wang Junjie
-
----
-
-> 如果你觉得这个项目有意思，欢迎点个 ⭐️ 或者拍一下你的 Mac 表示支持（误）。

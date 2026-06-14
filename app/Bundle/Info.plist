@@ -3,19 +3,19 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleName</key>
-    <string>Always Yes</string>
+    <string>Yes Engineer</string>
     <key>CFBundleDisplayName</key>
-    <string>Always Yes</string>
+    <string>Yes Engineer</string>
     <key>CFBundleIdentifier</key>
-    <string>ai.slaptoyes.app</string>
+    <string>ai.yesengineer.app</string>
     <key>CFBundleVersion</key>
-    <string>0.2.0</string>
+    <string>1.0.0</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.2.0</string>
+    <string>1.0.0</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleExecutable</key>
-    <string>SlapToYes</string>
+    <string>YesEngineer</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIconName</key>
@@ -27,6 +27,6 @@
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSAppleEventsUsageDescription</key>
-    <string>Always Yes 需要在你拍击 Mac 时给 AI 编程助手发送 Enter。</string>
+    <string>Yes Engineer needs Accessibility permission to send input to your AI coding assistant.</string>
 </dict>
 </plist>

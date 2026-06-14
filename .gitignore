@@ -9,8 +9,7 @@ app/Package.resolved
 *.xcodeproj/
 
 # Go (legacy v0.1 CLI)
-slap-to-yes
-baituo-cc
+yes-engineer
 *.exe
 *.dll
 *.so

@@ -3,8 +3,8 @@ import ServiceManagement
 import os
 
 enum DaemonInstaller {
-    private static let log = Logger(subsystem: "ai.slaptoyes", category: "installer")
-    static let plistName = "ai.slaptoyes.daemon.plist"
+    private static let log = Logger(subsystem: "ai.yesengineer", category: "installer")
+    static let plistName = "ai.yesengineer.daemon.plist"
 
     static var service: SMAppService {
         SMAppService.daemon(plistName: plistName)
@@ -26,11 +26,11 @@ enum DaemonInstaller {
 
     static var statusDescription: String {
         switch service.status {
-        case .notRegistered: return "未安装"
-        case .enabled: return "已启用"
-        case .requiresApproval: return "需在系统设置中批准"
-        case .notFound: return "未找到 plist"
-        @unknown default: return "未知"
+        case .notRegistered: return L10n.text("Not installed", "未安装")
+        case .enabled: return L10n.text("Enabled", "已启用")
+        case .requiresApproval: return L10n.text("Approval required in System Settings", "需在系统设置中批准")
+        case .notFound: return L10n.text("plist not found", "未找到 plist")
+        @unknown default: return L10n.text("Unknown", "未知")
         }
     }
 }

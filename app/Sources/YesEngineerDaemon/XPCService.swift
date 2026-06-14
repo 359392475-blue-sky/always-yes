@@ -2,11 +2,11 @@ import Foundation
 import SharedTypes
 import os
 
-final class XPCService: NSObject, NSXPCListenerDelegate, SlapDaemonProtocol {
+final class XPCService: NSObject, NSXPCListenerDelegate, YesEngineerDaemonProtocol {
     private let listener: NSXPCListener
     private var subscribers: [NSXPCConnection] = []
     private let lock = NSLock()
-    private let log = Logger(subsystem: "ai.slaptoyes", category: "xpc")
+    private let log = Logger(subsystem: "ai.yesengineer", category: "xpc")
 
     var configHandler: ((DaemonConfig) -> Void)?
 
@@ -23,9 +23,9 @@ final class XPCService: NSObject, NSXPCListenerDelegate, SlapDaemonProtocol {
     // MARK: NSXPCListenerDelegate
 
     func listener(_ listener: NSXPCListener, shouldAcceptNewConnection conn: NSXPCConnection) -> Bool {
-        conn.exportedInterface = NSXPCInterface(with: SlapDaemonProtocol.self)
+        conn.exportedInterface = NSXPCInterface(with: YesEngineerDaemonProtocol.self)
         conn.exportedObject = self
-        conn.remoteObjectInterface = NSXPCInterface(with: SlapClientProtocol.self)
+        conn.remoteObjectInterface = NSXPCInterface(with: YesEngineerClientProtocol.self)
         conn.invalidationHandler = { [weak self, weak conn] in
             self?.removeSubscriber(conn)
         }
@@ -44,7 +44,7 @@ final class XPCService: NSObject, NSXPCListenerDelegate, SlapDaemonProtocol {
         lock.unlock()
     }
 
-    // MARK: SlapDaemonProtocol
+    // MARK: YesEngineerDaemonProtocol
 
     func ping(reply: @escaping (String) -> Void) {
         reply("pong")
@@ -77,7 +77,7 @@ final class XPCService: NSObject, NSXPCListenerDelegate, SlapDaemonProtocol {
         for conn in snapshot {
             let proxy = conn.remoteObjectProxyWithErrorHandler { [weak self] err in
                 self?.log.error("xpc broadcast: \(err.localizedDescription, privacy: .public)")
-            } as? SlapClientProtocol
+            } as? YesEngineerClientProtocol
             proxy?.slapDetected(data)
         }
     }

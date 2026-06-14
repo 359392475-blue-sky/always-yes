@@ -56,7 +56,7 @@ func cmdDoctor(args []string) int {
 	if os.Geteuid() == 0 {
 		fmt.Println("✓ Running as root (sensor access OK)")
 	} else {
-		fmt.Println("ⓘ Not running as root — 'slap-to-yes run' will need sudo")
+		fmt.Println("ⓘ Not running as root — 'yes-engineer run' will need sudo")
 	}
 
 	return rc
@@ -77,11 +77,11 @@ func cmdRun(args []string) int {
 	fs.Parse(args)
 
 	if os.Geteuid() != 0 {
-		fmt.Fprintln(os.Stderr, "slap-to-yes run requires sudo for IOKit HID access")
+		fmt.Fprintln(os.Stderr, "yes-engineer run requires sudo for IOKit HID access")
 		return 1
 	}
 	if !hasAccelDevice() {
-		fmt.Fprintln(os.Stderr, "AppleSPUHIDDevice 'accel' not found — try 'slap-to-yes doctor'")
+		fmt.Fprintln(os.Stderr, "AppleSPUHIDDevice 'accel' not found — try 'yes-engineer doctor'")
 		return 1
 	}
 
@@ -142,7 +142,7 @@ func runDetector(ctx context.Context, cfg Config, debug bool) int {
 	var lastEventTime time.Time
 	var lastSlap time.Time
 
-	fmt.Printf("slap-to-yes: listening (mode=%s, threshold=%.3f, cooldown=%dms). ctrl+c to quit.\n",
+	fmt.Printf("yes-engineer: listening (mode=%s, threshold=%.3f, cooldown=%dms). ctrl+c to quit.\n",
 		cfg.Mode, cfg.MinAmplitude, cfg.CooldownMs)
 
 	tick := time.NewTicker(pollInterval)
