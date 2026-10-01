@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest an improvement for Always Yes.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What workflow problem would this solve?
+      placeholder: "I often need to..."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What should Always Yes do?
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other ways to solve the same problem.
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Include hardware, macOS version, target apps, or screenshots if relevant.

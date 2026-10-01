@@ -1,0 +1,69 @@
+name: Bug report
+description: Report a reproducible problem with Always Yes.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please include enough detail to reproduce it.
+  - type: input
+    id: macos_version
+    attributes:
+      label: macOS version
+      placeholder: "Example: macOS 15.5"
+    validations:
+      required: true
+  - type: input
+    id: mac_model
+    attributes:
+      label: Mac model and chip
+      placeholder: "Example: MacBook Pro M3 Pro"
+    validations:
+      required: true
+  - type: dropdown
+    id: accessibility
+    attributes:
+      label: Accessibility permission
+      options:
+        - Granted
+        - Not granted
+        - Not sure
+    validations:
+      required: true
+  - type: dropdown
+    id: daemon
+    attributes:
+      label: Daemon status
+      options:
+        - Installed and running
+        - Not installed
+        - Not sure
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What did you do?
+      placeholder: "1. Start Always Yes\n2. Open Cursor\n3. Tap the left side of the MacBook\n4. ..."
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra context
+      description: Add screenshots, logs, or notes if useful. Please remove private information.

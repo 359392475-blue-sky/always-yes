@@ -2,6 +2,8 @@
 
 > 拍一下 Mac，自动按回车。专为 Claude Code、Cursor、Windsurf 等 AI 编程助手打造。
 
+**English summary:** Always Yes is an open-source macOS utility for AI-native coding workflows. On supported Apple Silicon Macs, a light tap on the MacBook body can send Enter to tools such as Codex, Claude Code, Cursor, Windsurf, VS Code, and terminal apps. It runs locally, does not upload data, and is designed to reduce repetitive confirmation friction during supervised AI coding.
+
 当 AI 第八十次问你「Run this command? (y/N)」时，你的手早就抬起来了。**Always Yes** 通过 Apple Silicon 内置的加速度计感应你拍击 Mac 的动作，自动按下回车键。
 
 ```
